@@ -12,7 +12,7 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 public class DepartmentDTO {
+	
 	private Long id;
 	private String name;
-
 }
