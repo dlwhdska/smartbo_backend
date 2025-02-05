@@ -10,8 +10,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import com.bo.address.dto.AddressMemberDTO;
-import com.my.member.entity.MemberEntity;
-import com.my.member.repository.MemberRepository;
+import com.bo.member.entity.MemberEntity;
+import com.bo.member.repository.MemberRepository;
 
 @Service
 public class AddressServiceImpl implements AddressService {
