@@ -17,12 +17,12 @@ import org.springframework.stereotype.Service;
 import com.bo.attendance.dao.AttendanceRepository;
 import com.bo.attendance.dto.AttendanceDTO;
 import com.bo.attendance.entity.AttendanceEntity;
+import com.bo.config.AttendanceConfig;
 import com.bo.exception.AddException;
 import com.bo.exception.FindException;
 import com.bo.exception.ModifyException;
 import com.bo.member.entity.MemberEntity;
 import com.bo.member.repository.MemberRepository;
-import com.my.config.AttendanceConfig;
 
 import lombok.extern.slf4j.Slf4j;
 
