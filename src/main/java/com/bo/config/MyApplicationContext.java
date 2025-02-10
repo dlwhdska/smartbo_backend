@@ -30,7 +30,7 @@ public class MyApplicationContext {
 	@Bean
 	@ConfigurationProperties("spring.datasource.hikari")
 	public HikariConfig hikariConfig() {
-		log.error("IN hikariConfig()-1");
+		log.info("IN hikariConfig()-1");
 		HikariConfig config = new HikariConfig();
 		
 		return config;
