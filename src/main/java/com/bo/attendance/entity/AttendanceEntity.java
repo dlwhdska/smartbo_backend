@@ -7,7 +7,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.DynamicInsert;
@@ -26,41 +25,32 @@ import lombok.Setter;
 @AllArgsConstructor
 @Builder
 @DynamicInsert
-
 @Entity
-@Table(name="attendance")
-@SequenceGenerator(name = "attendance_seq_generator",
-				   sequenceName = "attendance_seq",
-				   initialValue = 1,
-				   allocationSize = 1)
+@Table(name = "attendance")
 public class AttendanceEntity {
 
-	@Id
-	@GeneratedValue(strategy = GenerationType.SEQUENCE,
-					generator = "attendance_seq_generator")
-	private Integer id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY) 
+    private Integer id;
 
-	@ManyToOne
-	@JoinColumn(name = "memberId",
-				nullable = false)
-	private MemberEntity memberId;
-	
-	@Column(name="attendanceDate")
-	private String  attendanceDate;
-	
-	@Column(name="startTime")
-	private String  startTime;
-	
-	@Column(name="endTime")
-	private String  endTime;
-	
-	@Column(name="status")
-	private Integer status;
+    @ManyToOne
+    @JoinColumn(name = "memberId", nullable = false)
+    private MemberEntity memberId;
 
-	public void modifyAttendance(String endTime, Integer status) {
-		this.endTime = endTime;
-		this.status = status;
-	}
+    @Column(name = "attendanceDate")
+    private String attendanceDate;
 
-	
-} 
+    @Column(name = "startTime")
+    private String startTime;
+
+    @Column(name = "endTime")
+    private String endTime;
+
+    @Column(name = "status")
+    private Integer status;
+
+    public void modifyAttendance(String endTime, Integer status) {
+        this.endTime = endTime;
+        this.status = status;
+    }
+}

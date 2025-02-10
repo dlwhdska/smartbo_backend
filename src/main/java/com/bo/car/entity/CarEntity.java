@@ -43,10 +43,6 @@ public class CarEntity {
 	@Column(precision=12, scale=6)
 	private BigDecimal longitude;
 	
-//	@Column(nullable=false, length=2)
-//	@ColumnDefault("0") 
-//	private Long status;
-	
 	public void modifyCarLatitude(BigDecimal latitude) {
 		this.latitude = latitude;
 	}	

@@ -1,6 +1,6 @@
 package com.bo.stuff.dto;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
@@ -26,7 +26,7 @@ public class StuffReqDTO {
 	private MemberDTO member;
 	
 	@JsonFormat(pattern = "yyyy-MM-dd", timezone = "Asia/Seoul")
-	private Date reqDate;
+	private LocalDateTime reqDate;
 	
 	private Long quantity;
 	
