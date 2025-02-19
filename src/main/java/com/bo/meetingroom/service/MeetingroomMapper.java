@@ -150,7 +150,7 @@ public class MeetingroomMapper {
 		mrdto.setProjector(entity.getProjector());
 		mrdto.setSocket(entity.getSocket());
 		mrdto.setMarker(entity.getSocket());
-		System.out.println("******" + entity.getReservation().get(0).getMeetingDate());
+//		System.out.println("******" + entity.getReservation().get(0).getMeetingDate());
 		
 		List<MeetingReservationDTO> listmr = new ArrayList<>();
 		for(MeetingReservationEntity mre : entity.getReservation()) {

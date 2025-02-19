@@ -30,8 +30,6 @@ import com.bo.car.entity.CarRentEntity;
 import com.bo.car.repository.CarRentRepository;
 import com.bo.car.repository.CarRepository;
 import com.bo.member.entity.MemberEntity;
-import com.bo.notification.entity.NotificationEntity;
-import com.bo.notification.service.NotificationServiceImpl;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -45,18 +43,10 @@ public class CarServiceImpl implements CarService {
 	private CarRepository cr;
 	private CarRentRepository crr;
 	
-	// 찬석
-	private NotificationServiceImpl notify;
-	
 	@Autowired
 	public CarServiceImpl(CarRepository cr, CarRentRepository crr) {
 		this.cr = cr;
 		this.crr = crr;
-	}
-	
-	@Autowired
-	public void NotificationServiceImpl(NotificationServiceImpl notify) {
-	    this.notify = notify; // NotificationServiceImpl 주입
 	}
 	
 	@Transactional
@@ -97,7 +87,6 @@ public class CarServiceImpl implements CarService {
 	@Override
 	public Page<CarDTO> findAllCarList(Pageable pageable, String startDate, String endDate) {
 		Page<CarEntity> entityList = cr.findAllCarList(pageable, startDate, endDate);
-//		Page<CarEntity> entityList = cr.findAllCarList(pageable);
 
 		CarMapper cm = new CarMapper();
 		return entityList.map(cm::entityToDto);
@@ -113,8 +102,6 @@ public class CarServiceImpl implements CarService {
 		MemberEntity memberEntity = entity.getMember();
 		log.warn("차량예약 id : {}", memberEntity.getId());
 		
-	    notify.send(memberEntity, NotificationEntity.NotificationType.CAR, "차량이 예약 되었습니다.");
-
 	}
 	
 	//****************** 차량 대여 목록 **************************
@@ -191,19 +178,6 @@ public class CarServiceImpl implements CarService {
 		return map;
 	}
 	
-	public CarDTO findByIdLive(){
-		Map locationMap = saveLocationInfo();
-		
-		Optional<CarEntity> entity = cr.findById("740293");
-		CarMapper cm = new CarMapper();
-		CarDTO dto = cm.entityToDtoOptional(entity);
-		
-		dto.setLatitude((BigDecimal)locationMap.get("latitude"));
-		dto.setLongitude((BigDecimal)locationMap.get("longitude"));
-		
-		return dto;
-	}
-	
 	public Page<CarDTO> findAllCarManageList(Pageable pageable){
 		Page<CarEntity> entityList = cr.findAll(pageable);
 		CarMapper cm = new CarMapper();
@@ -230,12 +204,6 @@ public class CarServiceImpl implements CarService {
 		MemberEntity memberEntity = carRentEntity.getMember();
 		log.warn("차량반려 id : {}", memberEntity.getId());
 		
-		Long approveStatus = carRentEntity.getStatus();
-		
-		if(approveStatus == 2) {
-			notify.send(memberEntity, NotificationEntity.NotificationType.CAR, "차량요청이 승인되었습니다");
-		}
-		
 	}
 	
 	@Override
@@ -245,13 +213,6 @@ public class CarServiceImpl implements CarService {
 		carRentEntity.modifyCarRentStatus(status);
 		carRentEntity.modifyCarRentReject(carRent.getReject());
 		crr.save(carRentEntity);
-		
-		// 반려 알림
-		// 찬석
-		MemberEntity memberEntity = carRentEntity.getMember();
-		log.warn("차량반려 id : {}", memberEntity.getId());
-		
-	    notify.send(memberEntity, NotificationEntity.NotificationType.CAR, "차량이 반려되었습니다.");
 		
 	}
 	
@@ -342,4 +303,5 @@ public class CarServiceImpl implements CarService {
 		
 		return map;
 	}
+
 }

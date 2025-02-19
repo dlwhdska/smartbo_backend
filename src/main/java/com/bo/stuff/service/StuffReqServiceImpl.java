@@ -1,7 +1,7 @@
 package com.bo.stuff.service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,8 +13,6 @@ import com.bo.exception.AddException;
 import com.bo.exception.FindException;
 import com.bo.exception.ModifyException;
 import com.bo.member.entity.MemberEntity;
-import com.bo.notification.entity.NotificationEntity;
-import com.bo.notification.service.NotificationServiceImpl;
 import com.bo.stuff.dto.StuffReqDTO;
 import com.bo.stuff.entity.StuffEntity;
 import com.bo.stuff.entity.StuffReqEntity;
@@ -29,17 +27,12 @@ public class StuffReqServiceImpl implements StuffReqService{
 	@Autowired
 	private StuffReqRepository sr;
 	
-	// 찬석
-	@Autowired
-	private NotificationServiceImpl notify;
-	
 	public void createStuffReq(StuffReqDTO dto) throws AddException {
 		StuffReqEntity stuffReqEntity = StuffReqMapper.dtoToEntity(dto);
-//		System.out.println("service: "+stuffReqEntity.getStuff().getId());
 		sr.save(stuffReqEntity);
 	}
 
-	public List<StuffReqDTO> findByCase(String memberId, Long status, String stuffId, Date startDate, Date endDate)
+	public List<StuffReqDTO> findByCase(String memberId, Long status, String stuffId, LocalDateTime startDate, LocalDateTime endDate)
 	        throws FindException {
 
 	    // 부울 변수를 사용하여 조건을 명확하게 정의
@@ -65,7 +58,7 @@ public class StuffReqServiceImpl implements StuffReqService{
 	    return srDTOList;
 	}
 
-	private void handleStatusDefaultCase(boolean isStuffIdDefault, MemberEntity me, StuffEntity se, Date startDate, Date endDate, List<StuffReqDTO> srDTOList) {
+	private void handleStatusDefaultCase(boolean isStuffIdDefault, MemberEntity me, StuffEntity se, LocalDateTime startDate, LocalDateTime endDate, List<StuffReqDTO> srDTOList) {
 	    if (isStuffIdDefault) {
 	        // 날짜만 선택할 경우 - 요청상태는 전부
 	        addEntitiesToDTOList(sr.findByMemberAndReqDateBetweenOrderByReqDateAsc(me, startDate, endDate), srDTOList);
@@ -75,7 +68,7 @@ public class StuffReqServiceImpl implements StuffReqService{
 	    }
 	}
 
-	private void handleOtherCases(boolean isStuffIdDefault, MemberEntity me, StuffEntity se, Long status, Date startDate, Date endDate, List<StuffReqDTO> srDTOList) {
+	private void handleOtherCases(boolean isStuffIdDefault, MemberEntity me, StuffEntity se, Long status, LocalDateTime startDate, LocalDateTime endDate, List<StuffReqDTO> srDTOList) {
 	    if (isStuffIdDefault) {
 	        // 날짜, 요청상태만 선택할 경우
 	        addEntitiesToDTOList(sr.findByMemberAndReqDateBetweenAndStatusOrderByReqDateAsc(me, startDate, endDate, status), srDTOList);
@@ -107,7 +100,7 @@ public class StuffReqServiceImpl implements StuffReqService{
 	//==============================관리자용===================================================
 	
 	
-	public List<StuffReqDTO> findByManageCase(Long departmentId, Long status, String stuffId, Date startDate, Date endDate)
+	public List<StuffReqDTO> findByManageCase(Long departmentId, Long status, String stuffId, LocalDateTime startDate, LocalDateTime endDate)
 	        throws FindException {
 
 	    // 부울 변수를 사용하여 조건을 명확하게 정의
@@ -133,7 +126,7 @@ public class StuffReqServiceImpl implements StuffReqService{
 	    return srDTOList;
 	}
 
-	private void handleStatusDefaultCase(boolean isStuffIdDefault, boolean isDepartmentIdDefault, DepartmentEntity de, StuffEntity se, Date startDate, Date endDate, List<StuffReqDTO> srDTOList) {
+	private void handleStatusDefaultCase(boolean isStuffIdDefault, boolean isDepartmentIdDefault, DepartmentEntity de, StuffEntity se, LocalDateTime startDate, LocalDateTime endDate, List<StuffReqDTO> srDTOList) {
 	    if (isStuffIdDefault && isDepartmentIdDefault) {
 	        // 날짜만 선택
 	        findAndAddToDTOList(sr.findByReqDateBetweenOrderByReqDateAsc(startDate, endDate), srDTOList);
@@ -149,7 +142,7 @@ public class StuffReqServiceImpl implements StuffReqService{
 	    }
 	}
 
-	private void handleOtherCases(boolean isStuffIdDefault, boolean isDepartmentIdDefault, DepartmentEntity de, StuffEntity se, Long status, Date startDate, Date endDate, List<StuffReqDTO> srDTOList) {
+	private void handleOtherCases(boolean isStuffIdDefault, boolean isDepartmentIdDefault, DepartmentEntity de, StuffEntity se, Long status, LocalDateTime startDate, LocalDateTime endDate, List<StuffReqDTO> srDTOList) {
 	    if (isStuffIdDefault && isDepartmentIdDefault) {
 	        // 날짜, 요청상태 선택
 	        findAndAddToDTOList(sr.findByStatusAndReqDateBetweenOrderByReqDateAsc(status, startDate, endDate), srDTOList);
@@ -184,11 +177,6 @@ public class StuffReqServiceImpl implements StuffReqService{
         se.modifyStatus(dto.getStatus());
         sr.save(se);
         
-        // 비품 승인 알림
-		MemberEntity memberEntity = se.getMember();
-        
-		 notify.send(memberEntity, NotificationEntity.NotificationType.STUFF, "비품요청이 승인되었습니다.");
-		
 	}
 	
 	public void modifyReqReject(StuffReqDTO dto) throws ModifyException{
@@ -197,12 +185,6 @@ public class StuffReqServiceImpl implements StuffReqService{
         se.modifyStatus(dto.getStatus());
         se.modifyReject(dto.getReject());
         sr.save(se);
-        
-        // 비품 반려 알림
-		MemberEntity memberEntity = se.getMember();
-		log.warn("비품반려 id : {}", memberEntity.getId());
-        
-		 notify.send(memberEntity, NotificationEntity.NotificationType.STUFF, "비품요청이 반려되었습니다.");
         
 	}
 

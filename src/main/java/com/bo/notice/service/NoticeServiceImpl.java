@@ -25,7 +25,7 @@ public class NoticeServiceImpl implements NoticeService{
 	public Page<NoticeDTO> findAll(Pageable pageable) throws FindException{
 		Page<NoticeEntity> entity = notice.findAllByOrderByRegdateDesc(pageable);
 		NoticeMapper nm = new NoticeMapper();
-		System.out.println("service" + entity.getContent().get(0).getMember().getName());
+//		System.out.println("service" + entity.getContent().get(0).getMember().getName());
 		return entity.map(nm::VoToDto_ModelMapper);
 	}
 

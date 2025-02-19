@@ -19,8 +19,6 @@ import com.bo.meetingroom.entity.ParticipantsEntity;
 import com.bo.meetingroom.repository.MeetingReservationRepository;
 import com.bo.meetingroom.repository.ParticipantsRepository;
 import com.bo.member.entity.MemberEntity;
-import com.bo.notification.entity.NotificationEntity;
-import com.bo.notification.service.NotificationServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
@@ -28,7 +26,6 @@ import lombok.extern.slf4j.Slf4j;
 @Slf4j
 public class ReservationScheduler {
 
-    private final NotificationServiceImpl notify;
     private final MeetingReservationRepository reservation;
     
     @Autowired
@@ -37,8 +34,7 @@ public class ReservationScheduler {
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(Runtime.getRuntime().availableProcessors());
 
     @Autowired
-    public ReservationScheduler(NotificationServiceImpl notify, MeetingReservationRepository reservation) {
-        this.notify = notify;
+    public ReservationScheduler(MeetingReservationRepository reservation) {
         this.reservation = reservation;
     }
 			
@@ -94,19 +90,6 @@ public class ReservationScheduler {
 			}
 		}
 		
-		//예약자에게 알림 보내기
-		for (MemberEntity member : membersToNotify) {
-	        notify.send(member, NotificationEntity.NotificationType.MEETING, "30분 후 진행 예정인 회의가 있습니다");         
-	    }
-		
-		//참여자들에게 알림 보내기
-		if (participantsEntity.isEmpty()) {
-			System.out.println("참여자가 없습니다.");
-		} else {
-			notify.sendToParticipants(participantsEntity, NotificationEntity.NotificationType.MEETING, "30분 후 진행 예정인 회의가 있습니다");			
-		}
-		
-	    log.warn("------알림 완료-----");
 	}
 	
 }

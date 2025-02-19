@@ -87,11 +87,6 @@ public class CarController {
 		return map;
 	}
 	
-	@GetMapping("/updatelive")
-	public CarDTO findByIdLive() {
-		return cs.findByIdLive();
-	} 
-	
 	@GetMapping("/managelist/{currentPage}")
 	public Page<CarDTO> findAllCarManageList(@PathVariable int currentPage) throws FindException{
 		System.out.println("currentPage: "+currentPage);
