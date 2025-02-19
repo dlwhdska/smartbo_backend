@@ -1,7 +1,7 @@
 package com.bo.stuff.service;
 
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import com.bo.exception.AddException;
@@ -32,7 +32,7 @@ public interface StuffReqService {
      * @return List<StuffReqDTO>
      * @throws FindException
      */
-	public List<StuffReqDTO> findByCase(String memberId, Long status, String stuffId, Date startDate, Date endDate)
+	public List<StuffReqDTO> findByCase(String memberId, Long status, String stuffId, LocalDateTime startDate, LocalDateTime endDate)
 			throws FindException;
 
 	/**
@@ -63,7 +63,7 @@ public interface StuffReqService {
 	 * @return
 	 * @throws FindException
 	 */
-	public List<StuffReqDTO> findByManageCase(Long departmentId, Long status, String stuffId, Date startDate, Date endDate)
+	public List<StuffReqDTO> findByManageCase(Long departmentId, Long status, String stuffId, LocalDateTime startDate, LocalDateTime endDate)
 			throws FindException;
 	
 	/**

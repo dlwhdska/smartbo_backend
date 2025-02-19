@@ -129,47 +129,47 @@ public class AttendanceServiceImpl implements AttendanceService {
 	// 퇴근
 	@Override
 	public void modifyAttendance(AttendanceDTO dto) throws ModifyException {
-
 	    AttendanceEntity entity = model.DtoToVo(dto);
-
 	    MemberEntity memberId = entity.getMemberId();
 	    LocalDate currentDate = LocalDate.now();
-
-	    Optional<AttendanceEntity> existingAttendance = repository.findByMemberIdAndAttendanceDate(memberId, currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd")));
-
+	    Optional<AttendanceEntity> existingAttendance = repository.findByMemberIdAndAttendanceDate(
+	        memberId, 
+	        currentDate.format(DateTimeFormatter.ofPattern("yyyy-MM-dd"))
+	    );
+	    
 	    List<Integer> statusList = config.getStatus();
 	    List<String> timeList = config.getTime();
-
-	    Integer earlyStatus = statusList.get(5); // early 상태 -> 조퇴
+	    Integer earlyStatus = statusList.get(5);  // early 상태 -> 조퇴
+	    Integer normalStatus = statusList.get(1);  // normal 상태 -> 정상 퇴근
 	    String off = timeList.get(3);
-	    
+
 	    if (!existingAttendance.isPresent()) {
-	    	log.warn("출근 기록이 없습니다");
-	    	throw new ModifyException("출근 기록이 없습니다. 먼저 출근을 기록해야 합니다.");
+	        log.warn("출근 기록이 없습니다");
+	        throw new ModifyException("출근 기록이 없습니다. 먼저 출근을 기록해야 합니다.");
 	    }
-	    
+
 	    AttendanceEntity existingEntity = existingAttendance.get();
-	    
 	    if (existingEntity.getEndTime() != null) {
-	    	log.warn("이미 퇴근한 사원입니다.");
-	    	throw new ModifyException("이미 퇴근한 사원입니다.");
+	        log.warn("이미 퇴근한 사원입니다.");
+	        throw new ModifyException("이미 퇴근한 사원입니다.");
 	    } else {
-	    	
-	    	LocalTime currentTime = LocalTime.now();
-	    	LocalTime offTime = LocalTime.parse(off); // 퇴근 시간 설정
-	    	
-	    	if (currentTime.isBefore(offTime)) { // 조퇴
-	    		existingEntity.setEndTime(currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
-	    		existingEntity.setStatus(earlyStatus);
-	    	}
-	    	
-	    	repository.save(existingEntity);
-	    	
+	        LocalTime currentTime = LocalTime.now();
+	        LocalTime offTime = LocalTime.parse(off);
+
+	        existingEntity.setEndTime(currentTime.format(DateTimeFormatter.ofPattern("HH:mm:ss")));
+	        
+	        // 퇴근 시간에 따른 상태 설정
+	        if (currentTime.isBefore(offTime)) {
+	            // 조퇴
+	            existingEntity.setStatus(earlyStatus);
+	        } else {
+	            // 정상 퇴근
+	            existingEntity.setStatus(normalStatus);
+	        }
+	        
+	        repository.save(existingEntity);
 	    }
-
-	    
 	}
-
 	@Override
 	public Page<AttendanceDTO> findAllByAttendanceDate(String memberId, String attendanceDate, Pageable pageable) throws FindException {
 	    log.warn("1. findAllByAttendanceDate의 memberid ===> {} ", memberId);

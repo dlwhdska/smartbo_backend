@@ -20,11 +20,9 @@ public class MyMVCContext implements WebMvcConfigurer{
 	
 	@Override
 	public void addCorsMappings(CorsRegistry registry) {
-		registry.addMapping("/**")
-				.allowCredentials(true)
-				.allowedOrigins("http://localhost:5173")
-				.allowedOrigins("http://192.168.1.12:5500")
-				.allowedOrigins("http://192.168.1.91:5500")
-				.allowedMethods("GET","POST","PUT","DELETE","OPTIONS"); 
+	    registry.addMapping("/**")
+	            .allowCredentials(true)
+	            .allowedOrigins("http://localhost:5173", "http://192.168.1.12:5500", "http://192.168.1.91:5500")
+	            .allowedMethods("GET", "POST", "PUT", "DELETE", "OPTIONS");
 	}
 }

@@ -28,18 +28,12 @@ import com.bo.meetingroom.repository.MeetingReservationRepository;
 import com.bo.meetingroom.repository.MeetingRoomRepository;
 import com.bo.meetingroom.repository.ParticipantsRepository;
 import com.bo.member.entity.MemberEntity;
-import com.bo.notification.entity.NotificationEntity;
-import com.bo.notification.service.NotificationServiceImpl;
 
 import lombok.extern.slf4j.Slf4j;
 
 @Service
 @Slf4j
 public class MeetingroomServiceImpl implements MeetingroomService {
-	
-	// 찬석
-	@Autowired
-	NotificationServiceImpl notify;
 	
 	@Autowired
 	MeetingRoomRepository meetingroom;
@@ -65,7 +59,6 @@ public class MeetingroomServiceImpl implements MeetingroomService {
 		//Vo->DTO
 		for (MeetingroomDetailEntity mre : entity) {
 			MeetingRoomDTO dto = mapper.Meetingroom_VoToDto(mre);
-			System.out.println("++++" + dto.getReservation().get(0).getMeetingDate());
 			list.add(dto);
 		}
 		return list;
@@ -112,9 +105,6 @@ public class MeetingroomServiceImpl implements MeetingroomService {
 			MeetingReservationEntity savedEntity = reservation.save(entity);
 			System.out.println("끝 : savedEntity" + savedEntity.getId());
 			
-			// 찬석 - 알림
-			notify.send(memberEntity, NotificationEntity.NotificationType.MEETING, "회의실예약이 되었습니다.");
-			notify.sendToParticipants(participantsEntity, NotificationEntity.NotificationType.MEETING, memberName + "님이 회의실을 예약했습니다.");
 		}
 			
 	}

@@ -24,8 +24,8 @@ public interface ScheduleRepository extends JpaRepository<ScheduleEntity, Long> 
 	 * @return 오늘의 개인 일정
 	 */
 	@Query("SELECT s FROM ScheduleEntity s "+
-			" WHERE s.member.id = :memberId AND ( TO_CHAR(SYSDATE, 'YYYY-MM-DD') BETWEEN TO_CHAR(s.startTime, 'YYYY-MM-DD') AND TO_CHAR(s.endTime, 'YYYY-MM-DD') ) "+
-			" ORDER BY s.startTime ASC")
-	public List<ScheduleEntity> findAllTodaySchedule(String memberId);
+		       " WHERE s.member.id = :memberId AND ( DATE_FORMAT(CURRENT_DATE(), '%Y-%m-%d') BETWEEN DATE_FORMAT(s.startTime, '%Y-%m-%d') AND DATE_FORMAT(s.endTime, '%Y-%m-%d') ) "+
+		       " ORDER BY s.startTime ASC")
+		public List<ScheduleEntity> findAllTodaySchedule(String memberId);
 
 }
